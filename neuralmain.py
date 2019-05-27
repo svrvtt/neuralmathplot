@@ -7,30 +7,36 @@ from pybrain.supervised.trainers import BackpropTrainer
 
 ds = SupervisedDataSet(2,1)
 
-#4 exemplos pra IA, 
+#4 samples of Neural Nets, where the first input (0.8 for 8 hours) represents the hours sleeped, and the second input (0.4 for 4 hours) the hours studied.
+#the third of the first sample (0.7 for 7.0 grade)  represents the grade of the student who sleeped 8 hours and sleeped 4 hours. 
+#i.e.: -> ((0.8, 0.4), '8 hours sleeped, 4 hours studied'. the (0.7) is the grade of this student. 
 ds.addSample((0.8, 0.4), (0.7))
 ds.addSample((0.2, 0.4), (0.45))
 ds.addSample((1.0, 0.6), (0.75))
 ds.addSample((0.6, 0.8), (0.90))
 
+#here whe have the build function for the neural nets
 nn = buildNetwork(2, 4, 1, bias=True)
 
+#the trainer function, who train the IA in those respective samples that we created.
 trainer = BackpropTrainer(nn, ds)
 
+#creating vectors to save the valors of time that the IA learned each task and quantity of tasks
+times = []
+tasks = []
+task = 1
+legendY = []
 
-tempos = []
-tarefas = []
-tarefa = 1
-legendaY = []
+#this 'for' saves the first 5 tasks and respective time of task learned by the IA.
 for i in range(2000):
-    while tarefa < 5:
-        inicio = time.perf_counter()
+    while task < 5:
+        start = time.perf_counter()
         print(trainer.train())
-        fim = time.perf_counter()
-        tempo = round(fim - inicio,4)
-        tempos.append(tempo)
-        tarefas.append(tarefa)
-        tarefa += 1
+        end = time.perf_counter()
+        time = round(end - start,4)
+        times.append(time)
+        tasks.append(task)
+        task += 1
     
     print(trainer.train())
 
@@ -38,37 +44,37 @@ for i in range(2000):
 vez = 1
 
 while vez <= 5:
-    valid_dormiu = False
-    valid_estudou = False
-    while valid_dormiu == False:
-        dormiu = input('Dormiu (Ex.: 0.4 = 4 horas)\n')
+    valid_sleeped = False
+    valid_studied = False
+    while valid_sleeped == False:
+        sleeped = input('Sleeped (Ex.: 0.4 = 4 hours)\n')
         try:
-            dormiu = float(dormiu)
-            if dormiu > 1 or dormiu < 0:
-                print("Informe numeros no formato '0.1' (para 1 hora)")
+            sleeped = float(sleeped)
+            if sleeped > 1 or sleeped < 0:
+                print("Entry numbers in format '0.1' (for 1 hour)")
                 print("\n")
             else:
-                valid_dormiu = True
+                valid_sleeped = True
         except:
-            print("Informe numeros no formato '0.1 (para 1 hora)")
+            print("Entry numbers in format '0.1 (for 1 hour)")
 
-    while valid_estudou == False:
-        estudou = input('Estudou (Ex.: 0.6 = 6 horas)\n')
+    while valid_studied == False:
+        studied = input('Studied (Ex.: 0.6 = 6 hours)\n')
         try:
-            estudou = float(estudou)
-            if estudou > 1 or estudou < 0:
-               print("Informe numeros maiores que 0 e menores que 1.0, utilize o formato '0.2' para 2 horas, i.e.")
+            studied = float(studied)
+            if studied > 1 or studied < 0:
+               print("Entry numbers greater than 0 and less then 1.0, use the format '0.2' for 2 hours, i.e.")
             else:
-                valid_estudou = True
+                valid_studied = True
         except:
-            print("Informe numeros no formato '0.1 (para 1 hora)")
+            print("Entry numbers in format '0.1 (for 1 hour)")
             
-    z = nn.activate((dormiu, estudou))[0] * 10.0
-    print('precisao de nota: ' + str(z))
+    z = nn.activate((sleeped, studied))[0] * 10.0
+    print('Grade precision: ' + str(z))
     vez += 1
-print(tarefas,tempos)
-legendaX = ['1a Tarefa', '2a Tarefa', '3a Tarefa', '4a Tarefa']
-plt.xticks(tarefas,legendaX)
-plt.plot(tarefas,tempos)
+print(tasks,times)
+legendX = ['1st Task', '2 Task', '3 Task', '4 Task']
+plt.xticks(tasks,legendX)
+plt.plot(tasks,times)
 plt.show()
 
